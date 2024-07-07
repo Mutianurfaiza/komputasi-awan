@@ -1,0 +1,284 @@
+kodingan pertama
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+data = pd.read_csv('data_payment.csv')
+data.dropna(inplace=True)
+data.describe()
+data.head()
+data.tail()
+
+kodingan kedua
+import pandas as pd
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+
+# 2. Menghitung total data
+total_data = len(data)
+
+# Menampilkan total data
+print(f"Total data yang ada pada file CSV: {total_data}")
+
+kodingan ketiga
+import pandas as pd
+from tabulate import tabulate
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'].str[:10], format='%Y-%m-%d')
+
+# 3. Menghitung total data setiap harinya
+daily_counts = data['purchase_date'].value_counts().reset_index()
+daily_counts.columns = ['tanggal', 'total_data']
+
+# Tampilkan data dalam bentuk tabel
+print("Total Data Setiap Harinya:")
+print(tabulate(daily_counts.sort_values(by='tanggal'), headers='keys', tablefmt='psql'))
+
+kodingan keempat
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter, DayLocator
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'].str[:10], format='%Y-%m-%d')
+
+# 3. Menghitung total data setiap harinya
+daily_counts = data['purchase_date'].value_counts().reset_index()
+daily_counts.columns = ['tanggal', 'total_data']
+daily_counts = daily_counts.sort_values(by='tanggal')
+
+# 4. Menyiapkan grafik
+plt.figure(figsize=(12, 6))
+plt.plot(daily_counts['tanggal'], daily_counts['total_data'], marker='o', linestyle='-', color='b')
+
+# 5. Menambahkan judul dan label
+plt.title('Jumlah Data Setiap Harinya')
+plt.xlabel('Tanggal')
+plt.ylabel('Jumlah Data')
+
+# 6. Menampilkan semua tanggal pada sumbu x
+plt.gca().xaxis.set_major_locator(DayLocator())
+plt.gca().xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))
+
+plt.xticks(rotation=45)
+plt.tight_layout()
+
+# 7. Menampilkan grid dan menyimpan grafik
+plt.grid(True)
+plt.tight_layout()
+
+# Menampilkan grafik
+plt.show()
+
+kodingan kelima
+import pandas as pd
+import matplotlib.pyplot as plt
+from tabulate import tabulate
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'], errors='coerce')
+
+# Fungsi untuk menampilkan data per hari berdasarkan bulan dan tahun
+def show_daily_data(month, year):
+    # Filter data berdasarkan bulan dan tahun yang diinputkan
+    filtered_data = data[(data['purchase_date'].dt.month == month) & (data['purchase_date'].dt.year == year)]
+
+    # Jika tidak ada data untuk bulan dan tahun yang diinputkan
+    if filtered_data.empty:
+        print(f"Tidak ada data untuk bulan {month} tahun {year}")
+        return
+
+    # 3. Menghitung jumlah data per hari
+    daily_counts = filtered_data['purchase_date'].dt.day.value_counts().sort_index().reset_index()
+    daily_counts.columns = ['Hari', 'Jumlah Data Pembelian']
+
+    # 4. Menampilkan tabel dengan tabulate
+    print(f"\nData Pembelian untuk Bulan {month} Tahun {year}:")
+    table = tabulate(daily_counts, headers='keys', tablefmt='pretty', showindex=False)
+    print(table)
+
+    # 5. Membuat grafik garis
+    plt.figure(figsize=(12, 6))
+    plt.plot(daily_counts['Hari'], daily_counts['Jumlah Data Pembelian'], marker='o', color='skyblue', linewidth=2, markersize=8)
+    plt.xlabel('Hari')
+    plt.ylabel('Jumlah Data Pembelian')
+    plt.title(f'Jumlah Data Pembelian per Hari\nBulan {month} Tahun {year}')
+    plt.xticks(daily_counts['Hari'])
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Menampilkan grafik
+    plt.tight_layout()
+    plt.show()
+
+# Contoh penggunaan: Input bulan dan tahun
+bulan = int(input("Masukkan bulan (1-12): "))
+tahun = int(input("Masukkan tahun: "))
+
+show_daily_data(bulan, tahun)
+
+kodingan keenam
+import pandas as pd
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'], errors='coerce')
+
+# 3. Mengelompokkan data berdasarkan bulan dan tahun
+data['month_year'] = data['purchase_date'].dt.to_period('M')
+monthly_counts = data['month_year'].value_counts().reset_index()
+monthly_counts.columns = ['month_year', 'total_data']
+monthly_counts = monthly_counts.sort_values(by='month_year')
+
+# 4. Menampilkan tabel
+print(monthly_counts)
+
+kodingan ketujuh
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# Menyajikan dalam bentuk grafik
+plt.figure(figsize=(12, 6))
+plt.plot(monthly_counts['month_year'].astype(str), monthly_counts['total_data'], marker='o', linestyle='-', color='b')
+plt.xlabel('Month-Year')
+plt.ylabel('Total Data')
+plt.title('Monthly Data Counts')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.tight_layout()
+
+# Save the plot to a file
+
+# Display the plot
+plt.show()
+
+kodingan kedelapan
+import pandas as pd
+from tabulate import tabulate
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'], errors='coerce')
+
+# 3. Filter data untuk rentang jam 06:00 - 23:00
+filtered_data = data[(data['purchase_date'].dt.hour >= 6) & (data['purchase_date'].dt.hour <= 23)]
+
+# 4. Mengelompokkan data berdasarkan jam
+hourly_counts = filtered_data['purchase_date'].dt.hour.value_counts().reset_index()
+hourly_counts.columns = ['hour', 'total_data']
+hourly_counts = hourly_counts.sort_values(by='hour')
+
+# 5. Menampilkan tabel dengan tabulate
+table = tabulate(hourly_counts, headers='keys', tablefmt='pretty', showindex=False)
+
+# 6. Print tabel
+print(table)
+
+kodingan kesembilan
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'], errors='coerce')
+
+# 3. Filter data untuk rentang jam 06:00 - 23:00
+filtered_data = data[(data['purchase_date'].dt.hour >= 6) & (data['purchase_date'].dt.hour <= 23)]
+
+# 4. Mengelompokkan data berdasarkan jam
+hourly_counts = filtered_data['purchase_date'].dt.hour.value_counts().reset_index()
+hourly_counts.columns = ['hour', 'total_data']
+hourly_counts = hourly_counts.sort_values(by='hour')
+
+# 5. Membuat grafik batang
+plt.figure(figsize=(10, 6))
+plt.bar(hourly_counts['hour'], hourly_counts['total_data'], color='skyblue')
+plt.xlabel('Jam (24-hour)')
+plt.ylabel('Jumlah Data Pembelian')
+plt.title('Jumlah Data Pembelian per Jam (06:00 - 23:00)')
+plt.xticks(hourly_counts['hour'])
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+# 6. Menampilkan grafik
+plt.tight_layout()
+plt.show()
+
+kodingan kesepuluh
+import pandas as pd
+from tabulate import tabulate
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'], errors='coerce')
+
+# 3. Mengelompokkan data berdasarkan rentang tanggal
+data['date_range'] = pd.cut(data['purchase_date'].dt.day, bins=[0, 10, 20, 31], right=False, labels=['1-10', '11-20', '21-31'])
+
+# 4. Menghitung jumlah data untuk setiap rentang tanggal
+date_range_counts = data['date_range'].value_counts().sort_index().reset_index()
+date_range_counts.columns = ['Rentang Tanggal', 'Jumlah Data Pembelian']
+
+# 5. Menampilkan tabel dengan tabulate
+table = tabulate(date_range_counts, headers='keys', tablefmt='pretty', showindex=False)
+
+# 6. Print tabel
+print(table)
+
+kodingan kesebelas
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Membaca data dari CSV
+data = pd.read_csv('data_payment.csv', delimiter=';')
+data.dropna(inplace=True)
+
+# 2. Mengubah format tanggal
+data['purchase_date'] = pd.to_datetime(data['purchase_date'], errors='coerce')
+
+# 3. Mengelompokkan data berdasarkan rentang tanggal
+data['date_range'] = pd.cut(data['purchase_date'].dt.day, bins=[0, 10, 20, 31], right=False, labels=['1-10', '11-20', '21-31'])
+
+# 4. Menghitung jumlah data untuk setiap rentang tanggal
+date_range_counts = data['date_range'].value_counts().sort_index()
+
+# 5. Membuat grafik batang
+plt.figure(figsize=(8, 6))
+date_range_counts.plot(kind='bar', color='salmon')
+plt.xlabel('Rentang Tanggal')
+plt.ylabel('Jumlah Data Pembelian')
+plt.title('Jumlah Data Pembelian per Rentang Tanggal')
+plt.xticks(rotation=0)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+# 6. Menampilkan grafik
+plt.tight_layout()
+plt.show()
+
+link akses : https://colab.research.google.com/drive/1TSxd5UpY8XJaFblA0bKGUUtFwNIY-iZG?usp=sharing
